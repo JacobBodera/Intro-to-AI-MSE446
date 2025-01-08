@@ -1,0 +1,98 @@
+---
+title: "Assignment 2 Solution"
+author: "Jacob Bodera"
+date: "2024-11-5"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Module 1: Introduction to Machine Learning 
+
+## 1.1 What is Machine Learning 
+
+- ML is a branch of AI which assists humans by using data and algorithms and gradually improving 
+
+**Artificial Intelligence**: exceeding or matching the capabilities of a human. Ability to discover (find new information), infer (read in other info from sources that not explicitly stated), and reason (figure things out) 
+
+- natural language processing, vision, text to speech, motion
+
+**Machine Learning**: something that learns rather than having to be programmed, uses large amounts of information to do this. A subset of AI. There are two main types: supervised (has more human involved learning) and unsupervised learning 
+
+- medical treatments (NN used to read genes of viruses and detect potentially dangerous mutations), self-driving cars (locating landmarks on the fly to make prediction more accurate), banking automation (better offers for customers, fraud detection)
+
+**Deep Learning**: a subset of ML and an example includes neural networks which have many different layers. Often don't know how reliable the results are or how they were derived. 
+
+## 1.2 Type of Machine Learning 
+
+### Supervised Learning 
+
+Machines are trained on labelled data - contains observations with: 
+
+- Input data, consisting of the properties of observations (e.g. shape, age, height, etc.) 
+
+- Output data or the label of the observation (e.g. cat or dog, diabetes or non-diabetes) 
+
+The properties of data are also called *features*. The label is also called the *outcome*. Supervised learning find a mapping from features to outcome. Applications include image classification, risk assessment, patient classification, fraud detection. 
+
+**Pros**: 
+
+- can predict output based on previous experiences 
+
+- have exact idea about the classes of an object 
+
+- widely used for solving real-world problems 
+
+**Cons**: 
+
+- not suitable for complex tasks 
+
+- not able to predict with high accuracy if test data is different from training data 
+
+- execution time of training could be very high 
+
+- need sufficient knowledge about classes of data 
+
+### Unsupervised Learning 
+
+Do not have labelled data and so we cannot supervise the ML models with the relationship between data features and target variable. Finds hidden patterns and groups data based on this. 
+
+**Pros**: 
+
+- can be used for more complex tasks due to not requiring labelled data 
+
+- easier to use due to no labelled data 
+
+**Cons**: 
+
+- more difficult than supervised as there are no state feature or target variable 
+
+- may have less accuracy as algorithms don't know exact output 
+
+### Reinforcement Learning (RL) 
+
+A type of algorithm based on an agent learning to behave properly in an environment in which it is rewarded for good outcomes and punished for bad ones. So, it is mainly a feedback based ML technique, learns by it's own experiences. There is no labelled data. Useful when decision making is sequential and goal is achieved in the long-term (such as ChatGPT). 
+
+## Machine Learning Workflow 
+
+The success of an ML project relies on designing a valid research questions and then following these steps: 
+
+1. **Gather data**: using real0time data from internet-of-things (IoT) -based devices or collecting it from other valid databases. 
+
+2. **Prepare data**: one of the most important requirements for a successful ML project. Common to spend a lot of time on this step. 
+
+3. **Select the model**: that best fits data at hand - identifying proper supervised, unsupervised, or reinforcement learning model 
+
+4. **Train and Test**: choose proper ratio of data for training ML models and testing their performance 
+
+5. **Evaluate**: select best parameters for the model to achieve highest accuracy
+
+
+
+
+
+
