@@ -588,6 +588,119 @@ data_with_na.fillna(data_with_na.median())
 
 ## 3.3 Duplicates 
 
+There are many situations where duplicate rows may be observed in a data set. This can cause ML models to form bias, uses more memory, and greater processing overhead. 
+
+### Find Duplicates 
+
+`DataFrame.duplicated()`: returns a Boolean series to indicate whether a row is duplicated 
+
+### Delete Duplicates 
+
+`DataFrame.drop_duplicates()`: removes duplicate rows 
+
+- if you want to remove duplicates based on the value of a particular feature, you can pass the column as a parameter 
+
+```
+DataFrame.drop_duplicates(['Column Name'])
+``` 
+
+- by default, it keeps the first instance and removes all after, `keep='last'` will keep the last instance 
+
+### Count Duplicates 
+
+Important to know the number of duplicate observations. If there are millions of data points with only two duplicates, then not really a big deal and can just leave them. 
+
+Can append the `sum()` or `value_counts()` methods to `DataFrame.duplicated()` to count the number of `True` and `False` values. 
+
+```
+data_dup.duplicated().sum()
+data_dup.duplicated().value_counts()
+``` 
+
+# Module 4: Categorical Data 
+
+It is very commong to see categorical data in real-world data sets. 
+
+## 4.1 Categorical Methods 
+
+Categorical data (aka categorical feature or variables) descrive the whole family of observations. From a computation view, it is easier to work with numbers than strings. 
+
+### Find Categorical Values 
+
+To extract distinct values from a Series, you can use functions like `unique()` or `value_counts()` in pandas. 
+
+`unique()`: shows all unique values present in a Series 
+
+`value_counts()`: shows the number of repetitions of each unique value in a Series 
+
+### Categorical Encoding 
+
+To enhance storage and computation efficiency, use methods to represent repeated categorical values using integers. A **dimension table** is one of the best practices for this. For example, have three colours of red, green, and blue would be converted to 0, 1, and 2 - we call this *categorical encoding* or *categorical representation*. A categorical object has two useful attributes: 
+
+- `categories` refers to all distinct values of the feature 
+
+- `codes` refers to the integer values associated with their categories  
+
+```
+city = pd.Categorical(['Paris', 'Tokyo', 'Cairo', 'Cairo', 'Paris', 'Paris'], dtype='category')
+
+city.categories
+# Index(['Cairo', 'Paris', 'Tokyo'], dtype='object')
+
+city.codes
+# array([1, 2, 0, 0, 1, 1], dtype=int8)
+``` 
+
+Can also create a 1:1 mapping from categories to codes using a dictionary. 
+
+```
+dict(enumerate(city.categories))
+
+# {0: 'Cairo', 1: 'Paris', 2: 'Tokyo'}
+```
+
+### Convert Type to Categorical 
+
+In pandas (and other packages), categorical data is often identified as a generic object class if not specified - occupies more memory than it should. Can change these data type to categorical using the `astype()` method. 
+
+```
+client = pd.DataFrame({'Country':['France', 'Japan', 'Egypt', 'Egypt', 'Japan', 'France', 'Japan'], 
+                       'Age':[27, 26, 28, 25, 27, 32, 33], 
+                       'Weight':[202, 146, 180, 219, 121, 288, 167]})
+                       
+client.dtypes
+# Country    object 
+  Age         int64 
+  Weight      int64 
+  dtype: object
+``` 
+
+Change the data type of country column to categorical. 
+
+```
+country_cat = client['Country'].astype('category')
+``` 
+
+Can use the `.categories` and `.codes` accessors to categorical data by joining it with `.cat`. 
+
+```
+country.cat.categories
+# Index(['Egypt', 'France', 'Japan'], dtype='object')
+
+country.cat.codes
+# 0    1 
+  1    2 
+  2    0 
+  3    0 
+  4    2 
+  5    1 
+  6    2 
+  dtype: int8
+```
+
+
+
+
 
 
 
