@@ -696,7 +696,216 @@ country.cat.codes
   5    1 
   6    2 
   dtype: int8
+``` 
+
+### Remove Unused Categories 
+
+When working with large data frames or series, we may not want to use all of the categories, and so we may want to remove some of them. You can use `.value_counts()` to see if you have any unused categories and then remove them using `.cat.remove_unused_categories()`. 
+
+### Types of Categorical Data 
+
+There are two sub-branches in categorical data: 
+
+1. **Ordinal**: are ordered or ranked categories (levels of education, product ranking, employee satisfaction) 
+
+2 .**Nominal**: are unordered categories (hair colours, ethnic groups, types of diseases) 
+
+## 4.2 Ordinal Encoding 
+
+Should map them to integers in order. There is no automatic way to do such mapping. Can create a dictionary mapping the ordinal variables to integers, and then use `replace()` or `map()` to replace the values. 
+
 ```
+dict_map = {'high':3, 'medium':2, 'low':1}
+market['Rank'] = market['Rank'].replace(dict_map) 
+# or 
+market['Rank'] = market['Rank'].map(dict_map) 
+``` 
+
+### Decoding 
+
+To transform the encoded integers back to string categories, can use an inverse map. Then you can again use `replace()` or `map()` to replace the values. 
+
+```
+inv_dict_map = {v:k for k,v in dict_map.items()} 
+market['Rank'] = market['Rank'].replace(inv_dict_map) 
+``` 
+
+## 4.3 Nominal Encoding 
+
+Nominal categorical values can be converted to numeric ones using the following methods: 
+
+- label encoding 
+
+- one-hot encoding 
+
+### Label Encoding 
+
+The idea is to assign a distinct integer to each categorical label in the data. A simple way to do this is to enumerate through the unique labels and then use `replace()` or `map()` to replace the values. 
+
+```
+market['Country'].unique()
+# array(['France', 'Japan', 'Egypt'], dtype=object)
+
+label = {label:code for code,label in enumerate(np.unique(market['Country']))} 
+# {'Egypt': 0, 'France': 1, 'Japan': 2}
+
+market['Country'] = market['Country'].replace(label) 
+``` 
+
+### LabelEncoder 
+
+One easier way to do this automatically is through LabelEncoder from `sklearn`. Import the package, create an instance of the encoder class, and then use `fit_transform()` to convert labels to integers. 
+
+```
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder() 
+market['Country'] = le.fit_transform(market['Country'].values) 
+``` 
+
+### Decoding 
+
+Can simply use `inverse_transform()` to get back string values from the integer values. 
+
+```
+market['Country'] = le.inverse_transform(market['Country']) 
+``` 
+
+### One-Hot Encoding 
+
+Although label coding is convenient, it can create bias because it converts categories to integers with different sizes, implying that one is greater than another. One-hot encoding represents each country in binary format of length of unique categories. 
+
+### Dummy Variables 
+
+These binary variables are also called *dummy variables*. The pandas `get_dummies()` method is an easy way to transform nominal variables into numeric values, representing an **indicator matrix**. If the feature (column) has n distinct values, the matrix will have n columns. 
+
+This will create a column for each country where each entry in the column indicates if the country is present in that row (1 or 0). 
+
+```
+pd.get_dummies(market2['Country'])
+
+# Can add prefix to make it clear what feature its referring to
+indicator = pd.get_dummies(market2['Country'], prefix='Country')  # will give Country_France for ex
+``` 
+
+If you want to merge another column to this data, can use the `join()` method. 
+
+```
+market2_matrix = indicator.join(market2[['Sales']])
+``` 
+
+### OneHotEncoder 
+
+We can also use the one-hot encoder from `sklearn` to convert the data. 
+
+```
+from sklearn.preprocessing import OneHotEncoder
+ohe = OneHotEncoder 
+array = ohe.fit_transform(market[['Country']]) # has 3 countries 
+
+# array([[0., 1., 0.],
+        [0., 0., 1.],
+        [1., 0., 0.], 
+        [0., 0., 1.]])
+``` 
+
+Note that `OneHotEncoder` only accepts array-like integers or strings. So, when taking the column from a data frame as an input, we need to pass `sparse=False` to return an array. 
+
+You can convert back to the original data as well. 
+
+```
+ohe.inverse_transform(array)
+``` 
+
+# Module 5: Outliers, Partitioning, and Feature Scaling 
+
+## 5.1 Outliers 
+
+It is important to check outliers because in some data sets, observations lie beyond our desired intervals. These values look different than the overall pattern of the data. 
+
+### Finding Outliers 
+
+Finding outliers is done through statistical analysis. This can be done by using the `DataFrame.describe()` method to view information like the standard deviation, max, min, mean, etc. You can view which rows meet some condition, like whether an observation is larger than a certain value. 
+
+```
+## Checking which rows in col 0 > 3
+outlier = sample[0]  
+outlier[outlier.abs()>3] 
+
+## Checking which rows in any col are > 3
+sample[(sample.abs()>3).any(axis="columns")]
+``` 
+
+### Three Standard Deviations 
+
+In the case our data is fairly normal, we often define an outlier as further than three standard deviations ($\sigma$) away from the mean ($\mu$). 
+
+$$\mu \pm 3\sigma$$ 
+
+```
+x = wine['Ash'] 
+mean = x.mean() 
+sd = x.std()  
+
+outliers = (x < mean-3*sd) | (x > mean+3*sd)  
+wine[outliers]
+``` 
+
+### Cap Outliers 
+
+One way to deal with outliers is to replace them with threshold values. This is known as **capping** the outliers and in this case, replace the values with either $\mu + 3\sigma$ or $\mu - 3\sigma$. 
+
+```
+wine_ash = wine[outliers] 
+ 
+outliers_below = (x < mean-3*sd) 
+outliers_above = (x > mean+3*sd)  
+
+wine['Ash'][outliers_below] = mean-3*sd 
+wine['Ash'][outliers_above] = mean+3*sd
+``` 
+
+## 5.2 Partitioning 
+
+In ML, the model is trained using the **training set** and and **test set** is used to obtain its accuracy. Some models also have additional parameters that need to be tuned, for these, we need another set called the **validation set**. 
+
+### Underfitting and Overfitting 
+
+When splitting data into train and test sets, we might remove some important info that could help train our model. So we don't want to assign too much to the test set. Also don't want to give too much to the train test because then model will be too specific and won't be good with new data. 
+
+*Underfitting*: happens when the model can't capture the relationship between input features and target outputs or underlying pattern in data. Has high bias. Occurs when model is too simple and not given enough data for training. 
+
+*Overfitting*: happens when model does a good job in training but performs poorly on test set. Are quite sensitive to small fluctuations in training set, so they have high variance. Occurs when model is too complex, has too many features to deal with. 
+
+### Bias-Variance Tradeoff 
+
+**Bias** is an indication of model error - difference between forecasted and true values. **Variance** refers to the flexibility of the model and its efforts to precisely capture the location of each data point during training. 
+
+- practically not possible to have a model with low bias and variance - there is always a tradeoff 
+
+- want to find a sweet spot between overly simple model and overly complex model 
+
+  + if in underfitting zone (high bias), increase complexity to reduce bias 
+  
+  + if in overfitting zone (high variance), simplify to reduce variance 
+  
+![](./images/bias-variance-tradeoff.png) 
+
+### Train-Test Split 
+
+- most common to use train-test ratio of 80:20 
+
+- The smaller the data set, the more balanced the train-test split is - 70:30 or even 60:40 
+
+- for a large data set (e.g. more than 100,000 points), its common to see 90:10 or even 99:1, as 10,000 points of data could still give good information about accuracy of model 
+
+- if you need a validation set, a split could be 80:10:10 
+
+### Split the Data 
+
+
+
+
 
 
 
