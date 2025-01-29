@@ -903,6 +903,126 @@ When splitting data into train and test sets, we might remove some important inf
 
 ### Split the Data 
 
+We use `train_test_split` function from scikit-learn model selection package to randomly split a data set into two subsets. 
+
+`train_test_split(*arrays, test_size=None, train_size=None, random_state=None, shuffle=True, stratify=None)` 
+
+- the only required params are the **arrays** to be passed in. Generally, we have two arrays of data: one containing features (X) and one containing the target output (Y) 
+
+- `test_size` and `train_size` can either be a ratio (float) or a number (int). We usually set a value between $0.0$ and $1.0$. If both are `None`, the default is $0.25$ for test size. 
+
+- `random_state` accepts an integer to control randomization during splitting, so we won't have different types of data points for our subsets if we run multiple times (like a seed) 
+
+- `shuffle`, by default, shuffles the data set before splitting 
+
+- `stratify` determines if we want to split the data in a stratified manner 
+
+```
+from sklearn.model_selection import train_test_split
+
+# Split whole data set, don't have separate cols for inputs and outputs
+train, test = train_test_split(df, test_size=.2)  
+
+# Can split of variables
+X_train, X_test, y_train, y_test = train_test_split(df.iloc[:,1:], df.iloc[:,0], test_size=.2)
+``` 
+
+## 5.3 Feature Scaling 
+
+Some ML methods have assumptions that must be satisfied for reliable inferences. The method may work well with small outputs, but its errors may inflate with large ones, making it hard to estimate model parameters. 
+
+Before feeding data into our training models, we have to make sure inputs are within the same scale. Two common feature scaling methods are normalization and standardization, and are both implemented using scikit-learn. 
+
+### Normalization 
+
+Rescales input variables to a given range (such as [0,1] or [-1,1]), by keeping the distance between each data rational to the original distance. The minimum value in the data becomes the lower bound and the largest the upper, so we call it **min-max normalization**. 
+
+$$x_i^{norm} = \frac{x_i - x_{min}}{x_{max} - x_{min}}$$ 
+
+- min-max normalization is very sensitive to outliers, works well if variance is small and distribution is normal 
+
+Can use `MinMaxScaler()` function from scikit-learn. Also, `MinMaxScaler` defaults to interval [0, 1] so to get between [-1, 1], need to initialize `MinMaxScaler((-1,1))`. 
+
+```
+from sklearn.preprocessing import MinMaxScaler
+
+min_max = MinMaxScaler()  
+
+wine_scaled = min_max.fit_transform(wine) 
+
+# Split the data into input (X) and output (y)
+X, y = wine.iloc[:,1:], wine.iloc[:,0] 
+
+# Fit and transform the input columns 
+X_scaled = min_max.fit_transform(X)
+``` 
+
+### Standardization 
+
+Transform the feature values to have a mean of 0 and a variance of 1, so the column has the same parameters as a normal distribution. 
+
+$$x_i^{std} = \frac{x_i - \mu_x}{\sigma_x}$$ 
+
+- note that it doesn't change the shape from non-normal to normal 
+
+- it is less sensitive to outliers, which maintain their information. 
+
+We can use the `StandardScaler()` function from scikit-learn to standardize data. 
+
+```
+from sklearn.preprocessing import StandardScaler  
+
+scaler = StandardScaler()
+
+X, y = wine.iloc[:,1:], wine.iloc[:,0] 
+
+X_scaled = scaler.fit_transform(X)  
+```
+
+# Module 6: Plotting and Visualization 
+
+One of the most important parts of ML, can be used in all stages of the project. Can convey much more information than numbers can and give insight into patterns and gaps in data. 
+
+## Plotting with Pandas 
+
+The `plot` method can be used on Series and DataFrames. When `x` and `y` values are not specified, the row index is used for the x-axis and the values are mapped to the y-axis. 
+
+There are many different kinds of plots that can be accessed using the `kind` parameter: 
+
+- line plot (default) 
+
+- vertical bar plot (bar) 
+
+- horizonal bar plot (barh) 
+
+- histogram (hist) 
+
+- box plot (box) 
+
+- kernel density estimation plot (kde / density) 
+
+- area plot (area) 
+
+- pie plot (pie) 
+
+- scatter plot (scatter) 
+
+You can also access each other of these kinds of plot as a method on `plot` in the case that you want to add more customization parameters. 
+
+## 6.2 Plotting with Matplotlib 
+
+Has a lot more customization than pandas and can support things like 3D plots. To use this package: 
+
+```
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+``` 
+
+## 6.3 Plotting with Seaborn 
+
+# Module 8: Linear Regression 
+
 
 
 
