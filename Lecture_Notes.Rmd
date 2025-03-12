@@ -1023,6 +1023,26 @@ import matplotlib.pyplot as plt
 
 # Module 8: Linear Regression 
 
+## 8.1 Simple Linear Regression Model 
+
+Linear regression is one of the simplest approaches to supervised learning to predict target values. 
+
+Simple linear regression is a very straightforward method that can be used to make regression-based inference. The idea is to fit a linear line to show the *approximate* relationship that exists between two variables: 
+
+- **X**: input or single *predictor variable* (aka independent variable) 
+
+- **Y**: output or *target variable* (aka dependent variable) 
+
+The relationship between X and Y, which can also be vectors, is: 
+
+$$Y \approx \beta_0 + \beta_1 X$$ 
+
+Or, to write this equation with an equals sign, you can add an error epsilon: 
+
+$$Y = \beta_0 + \beta_1 X + \epsilon$$ 
+
+
+
 
 
 
